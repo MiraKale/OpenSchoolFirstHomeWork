@@ -1,12 +1,10 @@
 package com.example.supplierservice.model;
 
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Set;
 
 
 @Entity
@@ -15,15 +13,18 @@ import java.math.BigDecimal;
 @Setter
 @AllArgsConstructor
 @NoArgsConstructor
+@Builder
 public class Product {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
+    @Column(nullable = false,unique = true)
     private String name;
     private String description;
     @Column(nullable = false)
     private BigDecimal price;
     @ManyToOne(fetch = FetchType.LAZY,cascade = {CascadeType.PERSIST,CascadeType.MERGE})
     private Category category;
+    @OneToMany(mappedBy="product",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
+    private Set<Review> reviews;
 }

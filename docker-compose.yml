@@ -1,0 +1,38 @@
+version: '3.8'
+services:
+  consumer-service:
+    image: consumer:0.0.1
+    build:
+      context: ./consumer-service
+    ports:
+      - "8081:8081"
+    environment:
+      - SERVER_PORT= 8081
+
+  supplier-service:
+    image: supplier:0.0.1
+    build:
+      context: ./supplier-service
+    ports:
+      - "8080:8080"
+    depends_on:
+      - service-db
+      - consumer-service
+    environment:
+      - SERVER_PORT= 8080
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://service-db/product_db
+
+  service-db:
+    image: postgres:14.7-alpine
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: 1234
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./infrastructure/db/create_db.sql:/docker-entrypoint-initdb.d/create_db.sql
+      - db-data:/var/lib/postgresql/data
+
+volumes:
+  db-data:
+  pgadmin-data:
