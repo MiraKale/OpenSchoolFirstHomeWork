@@ -98,6 +98,7 @@ public class ProductService {
     }
 
     public List<ProductDto> findAllWithFilter(String categoryName, BigDecimal price) {
+
         List<Product> products = new ArrayList<>();
 
         if (categoryName != null) {
