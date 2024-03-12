@@ -18,11 +18,11 @@ import java.util.List;
 @Service
 public class ConsumerService {
     private final RestTemplate restTemplate;
-
-    private final String urlProducts = "http://localhost:8080/api/v1/products";
-    private final String urlCategories = "http://localhost:8080/api/v1/categories";
-//    private final String urlProducts = "http://supplier-service/api/v1/products";
-//    private final String urlCategories = "http://supplier-service/api/v1/categories";
+//
+   private final String urlProducts = "http://localhost:8080/api/v1/products";
+//    private final String urlCategories = "http://localhost:8080/api/v1/categories";
+   // private final String urlProducts = "http://supplier-service:8080/api/v1/products";
+    private final String urlCategories = "http://supplier-service:8080/api/v1/categories";
     @PostConstruct
     public void init() {
         try {
@@ -108,6 +108,8 @@ public class ConsumerService {
                 log.warn(e.getMessage());
             }
         } catch (Exception e) {
+            List<Product> products = restTemplate.getForObject("http://localhost:8080/api/v1/products", List.class);
+            log.info("All products catch: {}", products);
             log.warn(e.getMessage());
         }
 
