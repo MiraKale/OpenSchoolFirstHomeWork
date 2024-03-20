@@ -74,22 +74,28 @@ public class ConsumerService {
             }
             try {
                 //Реализовать возможность фильтрации продуктов по различным критериям, таким как цена, категория и т. д.
-                String urlWithFilterParams = UriComponentsBuilder.fromUriString(urlProducts + "/filtered")
+                String urlWithFilterParams = UriComponentsBuilder.fromUriString(urlProducts)
                         .queryParam("categoryName", "Laptop")
                         .toUriString();
 
                 List<Product> productsWithFilter = restTemplate.getForObject(urlWithFilterParams, List.class);
                 log.info("products with filter by categoryName Laptop: {}", productsWithFilter);
+
+                String urlWithPriceFilterParams = UriComponentsBuilder.fromUriString(urlProducts)
+                        .queryParam("price", 70000)
+                        .toUriString();
+                List<Product> productsWithPriceFilter = restTemplate.getForObject(urlWithPriceFilterParams, List.class);
+                log.info("products with price greater than 70000: {}", productsWithPriceFilter);
             } catch (RestTemplateException e) {
                 log.warn(e.getMessage());
             }
             try {
                 //Добавить функциональность для поиска продуктов по их названию или описанию.
-                UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(urlProducts + "/name")
-                        .queryParam("name", "Iphone");
+                UriComponentsBuilder builder = UriComponentsBuilder.fromUriString(urlProducts)
+                        .queryParam("nameLike", "Iphone");
                 String urlWithParams = builder.toUriString();
-                Product productWithName = restTemplate.getForObject(urlWithParams, Product.class);
-                log.info("products with name containing Iphone 15 : {}", productWithName);
+                List<Product> productWithName = restTemplate.getForObject(urlWithParams, List.class);
+                log.info("products with name containing Iphone : {}", productWithName);
             } catch (RestTemplateException e) {
                 log.warn(e.getMessage());
             }

@@ -7,9 +7,11 @@ import com.example.supplierservice.mapper.ProductMapper;
 import com.example.supplierservice.model.Category;
 import com.example.supplierservice.model.Product;
 import com.example.supplierservice.repository.ProductRepository;
+import io.micrometer.common.util.StringUtils;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -17,6 +19,8 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+
+import static com.example.supplierservice.specifications.ProductSpecification.*;
 
 @Service
 @RequiredArgsConstructor
@@ -29,8 +33,16 @@ public class ProductService {
     private final CategoryService categoryService;
 
     @Transactional(readOnly = true)
-    public List<ProductDto> findAll() {
-        List<Product> products = productRepository.findAll();
+    public List<ProductDto> findAll(String categoryNameFilter, String nameLikeFilter,BigDecimal priceFilter) {
+
+        Specification<Product> filters = Specification
+                .where(StringUtils.isBlank(categoryNameFilter) ? null : hasCategoryNameEqual(categoryNameFilter))
+                .and(priceFilter==null ? null : greaterThanPrice(priceFilter))
+                .and(StringUtils.isBlank(nameLikeFilter) ? null : nameLike(nameLikeFilter));
+
+
+        List<Product> products = productRepository.findAll(filters);
+
         return productMapper.toDtoList(products);
     }
 
@@ -78,17 +90,12 @@ public class ProductService {
         productRepository.deleteById(id);
     }
 
-    @Transactional(readOnly = true)
-    public ProductDto findByName(String name) {
-        Product product = productRepository.findByName(name).orElseThrow(() -> new ResourceNotFoundException("Not Found with name: " + name));
-        return productMapper.toDto(product);
-    }
 
     public Product findProductIfExists(Long id) {
         return productRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Not Found: " + id));
     }
-
+    @Transactional
     public List<ProductDto> findAllWithPagination(int page, int size) {
         Pageable paging = PageRequest.of(page, size);
 
@@ -97,16 +104,4 @@ public class ProductService {
         return productMapper.toDtoList(products);
     }
 
-    public List<ProductDto> findAllWithFilter(String categoryName, BigDecimal price) {
-
-        List<Product> products = new ArrayList<>();
-
-        if (categoryName != null) {
-            products = productRepository.findByCategoryNameEquals(categoryName);
-        } else if (price != null) {
-            products = productRepository.findByCategoryAndPriceGreaterThan(price);
-        }
-
-        return productMapper.toDtoList(products);
-    }
 }

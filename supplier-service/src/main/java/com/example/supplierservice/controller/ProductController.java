@@ -19,8 +19,10 @@ public class ProductController {
 
     @GetMapping()
     @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> getAll() {
-        return productService.findAll();
+    public List<ProductDto> getAll(@RequestParam(required = false) String categoryName,
+                                   @RequestParam(required = false) String nameLike,
+                                   @RequestParam(required = false) BigDecimal price) {
+        return productService.findAll(categoryName, nameLike,price);
     }
 
     @PostMapping()
@@ -47,23 +49,10 @@ public class ProductController {
         productService.deleteById(id);
     }
 
-    @GetMapping("/name")
-    @ResponseStatus(HttpStatus.OK)
-    public ProductDto getByName(@RequestParam String name) {
-        return productService.findByName(name);
-    }
-
     @GetMapping("/paginated")
     @ResponseStatus(HttpStatus.OK)
     public List<ProductDto> getAllWithPagination(@RequestParam(defaultValue = "0") int page,
                                                  @RequestParam(defaultValue = "3") int size) {
         return productService.findAllWithPagination(page, size);
-    }
-
-    @GetMapping("/filtered")
-    @ResponseStatus(HttpStatus.OK)
-    public List<ProductDto> getAllWithFilter(@RequestParam(required = false) String categoryName,
-                                             @RequestParam(required = false) BigDecimal price) {
-        return productService.findAllWithFilter(categoryName, price);
     }
 }
