@@ -5,13 +5,9 @@ import com.example.supplierservice.service.CategoryService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
-import org.springframework.validation.FieldError;
-import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @RequestMapping("api/v1/categories")
@@ -29,7 +25,7 @@ public class CategoryController {
     @PostMapping()
     @ResponseStatus(HttpStatus.CREATED)
     public void create(@Valid @RequestBody CategoryDto categoryDto) {
-         categoryService.create(categoryDto);
+        categoryService.create(categoryDto);
     }
 
     @GetMapping("/{id}")
@@ -41,7 +37,7 @@ public class CategoryController {
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.OK)
     public void update(@RequestBody @Valid CategoryDto categoryDto, @PathVariable Long id) {
-         categoryService.update(categoryDto,id);
+        categoryService.update(categoryDto, id);
     }
 
     @DeleteMapping("/{id}")

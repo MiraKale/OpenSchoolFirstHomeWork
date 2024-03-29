@@ -13,4 +13,8 @@ public class CategoryDto {
     private Long id;
     @NotBlank(message = "category name should not be empty")
     private String name;
+
+    public CategoryDto(String name) {
+        this.name = name;
+    }
 }

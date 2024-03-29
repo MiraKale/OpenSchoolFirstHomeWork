@@ -16,7 +16,7 @@ import java.util.List;
 public class DbDownloadService {
     private final ProductRepository productRepository;
 
-   @PostConstruct
+  // @PostConstruct
     public void init() {
         Category iphoneCategory= Category
                 .builder()

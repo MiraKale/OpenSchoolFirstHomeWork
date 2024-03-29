@@ -17,4 +17,10 @@ public class ReviewDto {
     private String evaluation;
     @NotNull(message = "timestamp cannot be null")
     private long timestamp;
+
+    public ReviewDto(Long productId, String evaluation, long timestamp) {
+        this.productId = productId;
+        this.evaluation = evaluation;
+        this.timestamp = timestamp;
+    }
 }

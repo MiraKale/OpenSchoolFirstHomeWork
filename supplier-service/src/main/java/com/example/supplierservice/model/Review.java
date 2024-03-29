@@ -25,4 +25,10 @@ public class Review {
     private Evaluation evaluation;
     @Column(nullable = false)
     private LocalDateTime timestamp;
+
+    public Review(Product product, Evaluation evaluation, LocalDateTime timestamp) {
+        this.product = product;
+        this.evaluation = evaluation;
+        this.timestamp = timestamp;
+    }
 }

@@ -27,4 +27,9 @@ public class Product {
     private Category category;
     @OneToMany(mappedBy="product",cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REMOVE})
     private Set<Review> reviews;
+
+    public Product(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
 }

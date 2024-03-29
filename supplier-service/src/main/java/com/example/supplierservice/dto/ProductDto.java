@@ -19,4 +19,9 @@ public class ProductDto {
     @Min(value = 0,message = "price should be higher than 0")
     private BigDecimal price;
     private String categoryName;
+
+    public ProductDto(String name, BigDecimal price) {
+        this.name = name;
+        this.price = price;
+    }
 }
