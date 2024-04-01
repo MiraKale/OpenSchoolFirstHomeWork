@@ -1,5 +1,6 @@
 package com.example.supplierservice;
 
+import com.example.supplierservice.dto.CategoryDto;
 import com.example.supplierservice.dto.ReviewDto;
 import com.example.supplierservice.enums.Evaluation;
 import com.example.supplierservice.model.Product;
@@ -79,5 +80,19 @@ class ReviewControllerIntegrationTest {
                 .andExpect(status().isCreated());
 
         assertEquals(1, repository.findAll().size());
+    }
+
+    @Test
+    void shouldGetException_thenReviewToCreateAlreadyHaveId() throws Exception {
+        Product product = new Product("iphone 15", BigDecimal.valueOf(120000));
+        Long productId = productRepository.save(product).getId();
+        ReviewDto reviewDto = new ReviewDto(1L,productId,"GOOD", "GOOD", LocalDateTime.now().toEpochSecond(ZoneOffset.UTC));
+        String reviewDtoJson = objectMapper.writeValueAsString(reviewDto);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/reviews")
+                        .content(reviewDtoJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 }

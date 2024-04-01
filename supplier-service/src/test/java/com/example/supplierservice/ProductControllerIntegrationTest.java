@@ -1,6 +1,5 @@
 package com.example.supplierservice;
 
-import com.example.supplierservice.dto.CategoryDto;
 import com.example.supplierservice.dto.ProductDto;
 import com.example.supplierservice.model.Product;
 import com.example.supplierservice.repository.ProductRepository;
@@ -85,6 +84,13 @@ class ProductControllerIntegrationTest {
     }
 
     @Test
+    void shouldGetException_thenProductByIdNotExist() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/products/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void shouldCreateProduct() throws Exception {
         ProductDto productDto = new ProductDto("iphone 13", BigDecimal.valueOf(100000));
         String productDtoJson = objectMapper.writeValueAsString(productDto);
@@ -95,7 +101,18 @@ class ProductControllerIntegrationTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isCreated());
 
-        assertEquals(1,repository.findAll().size());
+        assertEquals(1, repository.findAll().size());
+    }
+
+    @Test
+    void shouldGetException_thenProductToCreateAlreadyHaveId() throws Exception {
+        ProductDto productDto = new ProductDto(1L,"iphone 13","description", BigDecimal.valueOf(100000),"category");
+        String productDtoJson = objectMapper.writeValueAsString(productDto);
+
+        mvc.perform(MockMvcRequestBuilders.post("/api/v1/products")
+                        .content(productDtoJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -106,13 +123,13 @@ class ProductControllerIntegrationTest {
         String productDtoJson = objectMapper.writeValueAsString(productDto);
 
         mvc.perform(MockMvcRequestBuilders
-                        .put("/api/v1/products/{id}",product.getId())
+                        .put("/api/v1/products/{id}", product.getId())
                         .content(productDtoJson)
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
 
-        assertEquals(1,repository.findAll().size());
-        assertEquals("iphone 14",repository.findById(product.getId()).get().getName());
+        assertEquals(1, repository.findAll().size());
+        assertEquals("iphone 14", repository.findById(product.getId()).get().getName());
     }
 
     @Test
@@ -121,7 +138,7 @@ class ProductControllerIntegrationTest {
         repository.save(product);
 
         mvc.perform(MockMvcRequestBuilders
-                        .delete("/api/v1/products/{id}",product.getId())
+                        .delete("/api/v1/products/{id}", product.getId())
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNoContent());
 

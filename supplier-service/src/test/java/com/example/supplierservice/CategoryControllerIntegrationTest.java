@@ -69,6 +69,13 @@ class CategoryControllerIntegrationTest {
     }
 
     @Test
+    void shouldGetException_thenCategoryByIdNotExist() throws Exception {
+        mvc.perform(MockMvcRequestBuilders.get("/api/v1/categories/{id}", 1)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
     void shouldCreateCategory() throws Exception {
         CategoryDto categoryDto = new CategoryDto("phone");
         String categoryDtoJson = objectMapper.writeValueAsString(categoryDto);
@@ -80,6 +87,18 @@ class CategoryControllerIntegrationTest {
                 .andExpect(status().isCreated());
 
         assertEquals(1, repository.findAll().size());
+    }
+
+    @Test
+    void shouldGetException_thenCategoryToCreateAlreadyHaveId() throws Exception {
+        CategoryDto categoryDto = new CategoryDto(1L, "phone");
+        String categoryDtoJson = objectMapper.writeValueAsString(categoryDto);
+
+        mvc.perform(MockMvcRequestBuilders
+                        .post("/api/v1/categories")
+                        .content(categoryDtoJson)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
     }
 
     @Test
